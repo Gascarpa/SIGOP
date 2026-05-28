@@ -5,6 +5,11 @@ const register = async (req, res) => {
   try {
 
     const { name, email, password, role } = req.body;
+    const allowedRoles = ["admin", "delegado", "investigador", "operador"];
+
+    if (allowedRoles.includes(role)) {
+      return res.status(400).json({ message: 'Função inválida! 🚔' });
+    }
 
     const userExists = await pool.query(
       'SELECT * FROM users WHERE email = $1',
@@ -94,8 +99,83 @@ const profile = async (req, res) => {
 
 }
 
+const adminPanel = async (req, res) => {
+
+  return res.status(200).json({
+    message: 'Bem-vindo ao painel de administração! 🚔',
+    user: req.user
+  });
+}
+
+const getUsers = async (req, res) => {
+
+  try {
+
+    const users = await pool.query('SELECT id, name, email, role FROM users');
+
+    return res.status(200).json({
+      users: users.rows
+    });
+
+  } catch (error) {
+
+    console.log(error);
+    return res.status(500).json({ message: 'Erro interno do servidor! 🚔' });
+
+  }
+
+}
+
+const updateUser = async (req, res) => {
+
+  const { id } = req.params;
+  const { name, email, role } = req.body;
+
+  try {
+
+    const result = await pool.query(
+      'UPDATE users SET name = $1, email = $2, role = $3 WHERE id = $4 RETURNING id, name, email, role',
+      [name, email, role, id]
+    );
+
+    return res.status(200).json({
+      message: 'Usuário atualizado com sucesso! 🚔',
+      user: result.rows[0]
+    });
+
+  } catch (error) {
+
+    console.log(error);
+    return res.status(500).json({ message: 'Erro ao atualizar usuário! 🚔' });
+
+  }
+
+}
+
+const deleteUser = async (req, res) => {
+
+  const { id } = req.params;
+  try {
+
+    await pool.query('DELETE FROM users WHERE id = $1', [id]);
+
+    return res.status(200).json({
+      message: 'Usuário deletado com sucesso! 🚔'
+    });
+
+  } catch (error) {
+    console.error('Erro ao deletar usuário:', error);
+    return res.status(500).json({ message: 'Erro. Usuario não Deletado! 🚔' });
+  }
+
+}
+
 module.exports = {
   register,
   login,
-  profile
+  profile,
+  adminPanel,
+  getUsers,
+  updateUser,
+  deleteUser
 };

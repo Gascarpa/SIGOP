@@ -2,14 +2,34 @@ const pool = require('../config/db');
 const bcrypt = require('bcryptjs');
 
 const register = async (req, res) => {
+
+  const { name, email, password } = req.body;
+
+  if (!name || !email || !password) {
+    return res.status(400).json({
+      message:
+        "Nome, email e senha são obrigatórios 🚫"
+    });
+  }
+
+  if (password.length < 6) {
+    return res.status(400).json({
+      message:
+        "A senha deve ter no mínimo 6 caracteres 🚫"
+    });
+  }
+
+  const emailRegex =
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  if (!emailRegex.test(email)) {
+
+    return res.status(400).json({
+      message:
+        "Email inválido 🚫"
+    });
+  }
   try {
-
-    const { name, email, password, role } = req.body;
-    const allowedRoles = ["admin", "delegado", "investigador", "operador"];
-
-    if (allowedRoles.includes(role)) {
-      return res.status(400).json({ message: 'Função inválida! 🚔' });
-    }
 
     const userExists = await pool.query(
       'SELECT * FROM users WHERE email = $1',
@@ -22,9 +42,11 @@ const register = async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    const role = "operador"; // Define o papel padrão como "operador"
+
     const newUser = await pool.query(
       'INSERT INTO users (name, email, password, role) VALUES ($1, $2, $3, $4) RETURNING id, name, email, role',
-      [name, email, hashedPassword, role || "operador"]
+      [name, email, hashedPassword, role]
     );
 
     return res.status(201).json({

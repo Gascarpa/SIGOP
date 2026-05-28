@@ -1,165 +1,131 @@
 # 🚔 SIGOP - Sistema Integrado de Gestão Operacional Policial
 
-API REST desenvolvida para gerenciamento operacional policial, com foco em autenticação segura, controle de acesso e futura gestão de ocorrências, viaturas e agentes.
+SIGOP é uma API REST Fullstack em desenvolvimento, criada para gerenciamento operacional policial, com foco em autenticação, controle de acesso por cargos e gerenciamento seguro de ocorrências.
 
-Este projeto está sendo desenvolvido como parte do meu portfólio prático em desenvolvimento backend/fullstack.
+O projeto foi desenvolvido com arquitetura backend profissional, utilizando autenticação JWT, RBAC (Role Based Access Control), ownership validation e PostgreSQL.
 
----
-
-## Tecnologias utilizadas
+## Tecnologias Utilizadas
 
 * Node.js
 * Express.js
 * PostgreSQL
 * JWT (JSON Web Token)
-* bcryptjs
-* dotenv
-* CORS
+* BcryptJS
+* Dotenv
+* Nodemon
 
 ---
 
-## Arquitetura do Projeto
+## Funcionalidades Implementadas
 
-O backend segue uma estrutura organizada e escalável:
+### Autenticação e Segurança
+
+* Registro de usuários
+* Login com JWT
+* Middleware de autenticação
+* Controle de acesso baseado em cargos (RBAC)
+* Proteção de rotas
+* Criptografia de senha com bcrypt
+* Ownership validation (usuários só podem acessar seus próprios recursos)
+
+### Gerenciamento de Usuários
+
+* Criar usuários
+* Listar usuários
+* Atualizar usuários
+* Deletar usuários
+* Controle de permissões administrativas
+
+### Gerenciamento de Ocorrências
+
+* Criar ocorrência
+* Listar ocorrências
+* Buscar ocorrência por ID
+* Atualizar ocorrência
+* Deletar ocorrência
+* Controle de acesso baseado no criador da ocorrência
+
+---
+
+## Regras de Acesso
+
+### Admin
+
+* Gerenciar usuários
+* Visualizar todas ocorrências
+* Editar qualquer ocorrência
+* Deletar qualquer ocorrência
+
+### Operador
+
+* Criar ocorrências
+* Visualizar apenas suas ocorrências
+* Editar apenas ocorrências próprias
+* Deletar apenas ocorrências próprias
+
+---
+
+## Estrutura do Projeto
 
 ```txt
 src/
-│
-├── config/         # Configurações (Banco de dados)
-├── controllers/    # Regras de negócio
-├── middlewares/    # Middlewares (auth, permissões)
-├── routes/         # Rotas da aplicação
-│
-├── app.js
-└── server.js
+├── config/
+├── controllers/
+├── middlewares/
+├── routes/
+└── index.js
 ```
 
 ---
 
-## Funcionalidades implementadas
+## Instalação
 
-### Autenticação
-
-* Cadastro de usuários
-* Login com JWT
-* Senha criptografada com bcrypt
-* Middleware de autenticação
-* Rotas protegidas
-* Validação de email duplicado
-
----
-
-## Endpoints disponíveis
-
-### Registrar usuário
-
-**POST**
-
-```http
-/auth/register
-```
-
-Exemplo Body:
-
-```json
-{
-  "name": "Gabriel",
-  "email": "gabriel@gmail.com",
-  "password": "123456",
-  "role": "admin"
-}
-```
-
----
-
-### Login
-
-**POST**
-
-```http
-/auth/login
-```
-
-Exemplo Body:
-
-```json
-{
-  "email": "gabriel@gmail.com",
-  "password": "123456"
-}
-```
-
----
-
-### Perfil do usuário (rota protegida)
-
-**GET**
-
-```http
-/auth/profile
-```
-
-Necessário enviar Bearer Token.
-
----
-
-## ⚙️ Como rodar o projeto
-
-### 1. Clone o repositório
+Clone o repositório:
 
 ```bash
-git clone URL_DO_REPOSITORIO
+git clone https://github.com/Gascarpa/SIGOP.git
 ```
 
-### 2. Instale as dependências
+Entre na pasta:
+
+```bash
+cd SIGOP
+```
+
+Instale as dependências:
 
 ```bash
 npm install
 ```
 
-### 3. Configure o arquivo `.env`
-
-Crie um arquivo `.env` na raiz:
+Configure o arquivo `.env`:
 
 ```env
 PORT=3000
-
-DB_USER=seu_usuario
-DB_HOST=localhost
-DB_DATABASE=sigop
-DB_PASSWORD=sua_senha
-DB_PORT=5432
-
+DATABASE_URL=sua_url_postgres
 JWT_SECRET=sua_chave_secreta
 ```
 
-### 4. Execute o projeto
+Execute o projeto:
 
 ```bash
 npm run dev
 ```
 
-Servidor iniciará em:
-
-```txt
-http://localhost:3000
-```
-
 ---
 
-## Próximas funcionalidades
+## Roadmap V2
 
-* CRUD de usuários
-* Controle de permissões (RBAC)
-* Gestão de ocorrências policiais
-* Gestão de viaturas
-* Gestão de agentes
-* Dashboard operacional
-* Logs do sistema
+* Dashboard administrativo
+* Sistema de status das ocorrências
+* Upload de evidências
 * Frontend React
+* Relatórios operacionais
+* Filtros avançados
+* Sistema de cargos policiais completos
 
 ---
 
-## Desenvolvedor
+## Autor
 
-Desenvolvido por **Gabriel Scarparo**
+Desenvolvido por Gabriel Scarparo.
